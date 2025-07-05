@@ -43,4 +43,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PSR-4 autoloading
 - MIT license
 - 100% test coverage
-- Laravel integration ready 
+- Laravel integration ready
+
+## [0.1.1] - 2025-01-15
+
+### Added
+- Laravel integration with ServiceProvider for auto-discovery
+- Asset publishing system for Laravel (`php artisan vendor:publish --tag=php-notifikasi-assets`)
+- Helper function `php_notifikasi_asset()` for consistent asset paths
+- Laravel demo file (`example/laravel_demo.php`)
+- Setup scripts for Laravel integration (`scripts/laravel-setup.sh`, `scripts/laravel-setup.ps1`)
+- Comprehensive Laravel documentation (`LARAVEL_INTEGRATION.md`)
+- Updated README with Laravel integration section
+
+### Fixed
+- Asset path issues in Laravel environment
+- 404 errors for CSS and font files in Laravel
+- Helper function loading issues
+- Documentation for Laravel troubleshooting
+
+### Changed
+- Updated composer.json with Laravel auto-discovery configuration
+- Enhanced README with Laravel integration guide
+- Improved asset management for framework compatibility
+
+## [0.1.0] - 2025-01-14
+
+### Added
+- Initial release of PHP Notifikasi
+- iOS-style notification system with Apple design language
+- Clean architecture with value objects and service classes
+- Multiple notification styles (clean, colored, blur, liquid-glass)
+- Dark mode support (light, dark, auto)
+- 6 notification positions (top-left, top-right, top-center, bottom-left, bottom-right, bottom-center)
+- Framework-agnostic design
+- Session and array storage implementations
+- HTML renderer with Tailwind CSS
+- Comprehensive unit tests
+- Documentation and examples
+
+### Features
+- Modern iOS design with blur effects and liquid glass
+- Responsive design for mobile devices
+- Auto-dismiss with configurable timers
+- Type safety with value objects
+- Clean architecture principles
+- No external dependencies
+- High performance rendering 

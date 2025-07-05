@@ -3,6 +3,7 @@
     "description": "Modern iOS-style notification library for PHP with Apple design system, dark mode support, and clean architecture",
     "type": "library",
     "license": "MIT",
+    "version": "0.1.1",
     "keywords": [
         "php",
         "notifications",
