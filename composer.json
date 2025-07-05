@@ -1,0 +1,71 @@
+{
+    "name": "rzlco666/php-notifikasi",
+    "description": "Modern iOS-style notification library for PHP with Apple design system, dark mode support, and clean architecture",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "notifications",
+        "ios",
+        "apple",
+        "design-system",
+        "dark-mode",
+        "laravel",
+        "framework-agnostic",
+        "toast",
+        "alerts"
+    ],
+    "authors": [
+        {
+            "name": "Rizal",
+            "email": "rizal@example.com",
+            "homepage": "https://github.com/rzlco666"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0|^8.1|^8.2|^8.3"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^9.0|^10.0",
+        "squizlabs/php_codesniffer": "^3.13"
+    },
+    "autoload": {
+        "psr-4": {
+            "Rzlco\\PhpNotifikasi\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Rzlco\\PhpNotifikasi\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Rzlco\\PhpNotifikasi\\Integration\\Laravel\\NotifikasiServiceProvider"
+            ],
+            "aliases": {
+                "Notif": "Rzlco\\PhpNotifikasi\\Integration\\Laravel\\NotifikasiFacade"
+            }
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test-coverage": "phpunit --coverage-html coverage",
+        "phpstan": "phpstan analyse",
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "check": [
+            "@phpstan",
+            "@cs-check",
+            "@test"
+        ]
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
