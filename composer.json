@@ -33,7 +33,10 @@
     "autoload": {
         "psr-4": {
             "Rzlco\\PhpNotifikasi\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
@@ -43,7 +46,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Rzlco\\PhpNotifikasi\\Integration\\Laravel\\NotifikasiServiceProvider"
+                "Rzlco\\PhpNotifikasi\\PhpNotifikasiServiceProvider"
             ],
             "aliases": {
                 "Notif": "Rzlco\\PhpNotifikasi\\Integration\\Laravel\\NotifikasiFacade"

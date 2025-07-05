@@ -122,58 +122,76 @@ echo Notif::render();
 
 ### Laravel Integration
 
-1. **Register Service Provider** (Laravel < 5.5):
+Untuk menggunakan di Laravel, ikuti langkah berikut:
 
-```php
-// config/app.php
-'providers' => [
-    Rzlco\PhpNotifikasi\Integration\Laravel\NotifikasiServiceProvider::class,
-],
-```
-
-2. **Publish Configuration**:
-
+### 1. Install Package
 ```bash
-php artisan vendor:publish --provider="Rzlco\PhpNotifikasi\Integration\Laravel\NotifikasiServiceProvider"
+composer require rzlco/php-notifikasi
 ```
 
-3. **Usage in Controllers**:
+### 2. Publish Assets
+```bash
+php artisan vendor:publish --tag=php-notifikasi-assets
+```
 
+### 3. Clear Cache
+```bash
+php artisan config:clear
+php artisan cache:clear
+```
+
+### 4. Use in Blade Template
 ```php
-// Using the facade
-use Rzlco\PhpNotifikasi\NotifikasiFacade as Notif;
-
-public function store(Request $request)
-{
-    // Your logic here
-    
-    Notif::success('Success!', 'User created successfully');
-    return redirect()->back();
-}
-
-// Or using the service
-public function update(Request $request)
-{
-    app('notifikasi')->error('Error!', 'Failed to update user');
-    return redirect()->back();
-}
-```
-
-4. **Blade Template**:
-
-```blade
 <!DOCTYPE html>
 <html>
 <head>
     <title>My App</title>
+    <!-- Include assets -->
+    <link href="{{ asset('vendor/php-notifikasi/assets/tailwind.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/php-notifikasi/assets/fonts/stylesheet.css') }}" rel="stylesheet">
 </head>
 <body>
     <!-- Your content -->
     
-    @notifikasi
+    <!-- Render notifications -->
+    {!! Notif::render() !!}
 </body>
 </html>
 ```
+
+### 5. Use in Controller
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use Rzlco\PhpNotifikasi\NotifikasiFacade as Notif;
+
+class UserController extends Controller
+{
+    public function store(Request $request)
+    {
+        try {
+            User::create($request->validated());
+            Notif::success('Success', 'User created successfully');
+            return redirect()->route('users.index');
+        } catch (\Exception $e) {
+            Notif::error('Error', 'Failed to create user');
+            return back()->withInput();
+        }
+    }
+}
+```
+
+### Troubleshooting Laravel
+
+Jika asset 404 error:
+1. Pastikan sudah publish assets: `php artisan vendor:publish --tag=php-notifikasi-assets`
+2. Cek file ada di `public/vendor/php-notifikasi/assets/`
+3. Clear cache: `php artisan config:clear && php artisan cache:clear`
+4. Test dengan demo: `example/laravel_demo.php`
+
+Lihat [LARAVEL_INTEGRATION.md](LARAVEL_INTEGRATION.md) untuk dokumentasi lengkap.
 
 ## 📖 Core Concepts
 
@@ -599,422 +617,3 @@ class JsonRenderer implements RendererInterface
 // Usage
 $notif = new Notifikasi(null, new JsonRenderer());
 ```
-
-### AJAX Integration
-
-```javascript
-// Frontend JavaScript
-fetch('/api/notifications')
-    .then(response => response.json())
-    .then(data => {
-        data.notifications.forEach(notif => {
-            // Handle notification data
-            console.log(notif.type, notif.title, notif.message);
-        });
-    });
-```
-
-```php
-// PHP endpoint
-header('Content-Type: application/json');
-echo Notif::json();
-```
-
-### Event Handling
-
-```php
-// Custom event handling (if implemented)
-$notif->on('notification.added', function($notification) {
-    // Log to external service
-    Log::info('Notification added', $notification->toArray());
-});
-```
-
-## 🧪 Testing
-
-```bash
-# Install dependencies
-composer install
-
-# Run tests
-vendor/bin/phpunit
-
-# Run with coverage
-vendor/bin/phpunit --coverage-html coverage
-
-# Run specific test file
-vendor/bin/phpunit tests/NotificationTest.php
-```
-
-### Test Example
-
-```php
-<?php
-// tests/NotificationTest.php
-use PHPUnit\Framework\TestCase;
-use Rzlco\PhpNotifikasi\Notification;
-
-class NotificationTest extends TestCase
-{
-    public function testNotificationCreation()
-    {
-        $notification = new Notification('success', 'Test Title', 'Test Message');
-        
-        $this->assertEquals('success', $notification->getType());
-        $this->assertEquals('Test Title', $notification->getTitle());
-        $this->assertEquals('Test Message', $notification->getMessage());
-    }
-}
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -am 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Create a Pull Request
-
-### Development Setup
-
-```bash
-# Clone repository
-git clone https://github.com/rzlco666/php-notifikasi.git
-cd php-notifikasi
-
-# Install dependencies
-composer install
-
-# Run tests
-vendor/bin/phpunit
-
-# Check code style
-vendor/bin/phpcs src/ tests/
-```
-
-## 📄 License
-
-MIT License. See [LICENSE](LICENSE) for details.
-
-## 👨‍💻 Author
-
-**Syahrizal Hanif**
-- GitHub: [@rzlco666](https://github.com/rzlco666)
-- Email: syahrizalhanif@gmail.com
-
-## 🙏 Credits
-
-Inspired by:
-- [php-flasher/php-flasher](https://github.com/php-flasher/php-flasher)
-- iOS Notification Design
-- Modern web design principles
-- Clean Architecture principles
-
-## 🗺️ Development Roadmap
-
-Our development roadmap is organized into three phases, prioritizing high-impact features that enhance developer experience and user engagement. The timeline is planned for implementation starting July 2025.
-
-### 🚀 Phase 1: Core Enhancements (Q3-Q4 2025)
-*High Impact, Low Effort - Foundation improvements*
-
-#### Notification Templates
-Predefined and customizable notification templates for common use cases.
-
-```php
-// Predefined templates
-Notif::template('welcome', ['username' => 'John']);
-Notif::template('order_confirmation', ['order_id' => '12345']);
-
-// Custom template system
-Notif::registerTemplate('welcome', [
-    'title' => 'Welcome {{username}}!',
-    'message' => 'Thank you for joining us.',
-    'style' => 'clean',
-    'duration' => 8000
-]);
-```
-
-#### Builder Pattern
-Fluent interface for creating notifications with better readability and flexibility.
-
-```php
-// Fluent interface
-Notif::builder()
-    ->type('success')
-    ->title('Operation Complete')
-    ->message('Your changes have been saved')
-    ->style('liquid-glass')
-    ->mode('auto')
-    ->position('top-right')
-    ->duration(5000)
-    ->dismissible(true)
-    ->send();
-```
-
-#### Event System & Hooks
-Extensible event system for customizing notification behavior.
-
-```php
-// Event listeners
-Notif::on('before_render', function($notification) {
-    // Modify notification before rendering
-});
-
-Notif::on('after_dismiss', function($notification) {
-    // Log or perform actions after dismissal
-});
-
-// Custom hooks
-Notif::hook('pre_save', function($notification) {
-    // Validate or modify before saving
-});
-```
-
-#### Rich Content Support
-Support for HTML content, images, and enhanced visual elements.
-
-```php
-// HTML content in notifications
-Notif::success('Order Status', '<strong>Order #123</strong> has been <em>shipped</em>', [
-    'allow_html' => true
-]);
-
-// Image/icon support
-Notif::info('New Message', 'You have a new message', [
-    'icon' => 'message-icon.png',
-    'avatar' => 'user-avatar.jpg'
-]);
-```
-
-### 🎯 Phase 2: Advanced Features (Q1-Q2 2026)
-*Medium Impact, Medium Effort - Enhanced functionality*
-
-#### Notification Groups & Categories
-Organize notifications into logical groups and categories for better management.
-
-```php
-// Group notifications
-Notif::group('user_actions')->success('Profile Updated');
-Notif::group('system')->warning('Maintenance Soon');
-
-// Category-based filtering
-Notif::category('security')->error('Login Attempt');
-Notif::category('billing')->info('Payment Received');
-```
-
-#### Progress & Status Notifications
-Real-time progress tracking and system status notifications.
-
-```php
-// Progress notifications
-Notif::progress('Uploading files...', 0);
-// Update progress
-Notif::updateProgress(50);
-Notif::completeProgress('Upload complete!');
-
-// Status notifications
-Notif::status('online', 'System is online');
-Notif::status('offline', 'System is offline', ['persistent' => true]);
-```
-
-#### Multi-language Support
-Localized notifications with automatic language detection.
-
-```php
-// Localized notifications
-Notif::locale('id')->success('Berhasil!', 'Data tersimpan');
-Notif::locale('en')->success('Success!', 'Data saved');
-
-// Auto-detect language
-Notif::autoLocale()->info('Welcome message');
-```
-
-#### Notification Analytics
-Track and analyze notification performance and user engagement.
-
-```php
-// Track notification metrics
-Notif::analytics()->track('notification_viewed', $notificationId);
-Notif::analytics()->track('notification_clicked', $notificationId);
-
-// Get analytics
-$stats = Notif::analytics()->getStats();
-// Returns: views, clicks, dismissals, etc.
-```
-
-#### Toast Stack Management
-Smart stacking and positioning to prevent notification overlap.
-
-```php
-// Stack notifications with smart positioning
-Notif::stack('bottom-right')->success('Saved!');
-Notif::stack('top-center')->info('Processing...');
-
-// Smart stacking to avoid overlap
-Notif::smartStack()->warning('Warning message');
-```
-
-### 🌟 Phase 3: Enterprise Features (Q3-Q4 2026)
-*High Impact, High Effort - Advanced capabilities*
-
-#### WebSocket Real-time Notifications
-Real-time notification delivery using WebSocket technology.
-
-```php
-// Real-time notifications
-Notif::realtime('user_123')->success('New message received');
-
-// WebSocket integration
-Notif::websocket()->broadcast('new_order', $orderData);
-```
-
-#### PWA Push Notifications
-Native push notifications for Progressive Web Applications.
-
-```php
-// Push notifications for PWA
-Notif::push('user_token')->success('Push notification');
-
-// Service worker integration
-Notif::serviceWorker()->register();
-```
-
-#### Notification Queue & Persistence
-Background processing and persistent storage for notifications.
-
-```php
-// Queue notifications for background processing
-Notif::queue('success', 'Email sent', 'Email will be sent in background');
-
-// Persistent notifications (stored in database)
-Notif::persistent('info', 'System Maintenance', 'Scheduled for tomorrow 2 AM');
-```
-
-#### Advanced Animation & Interactions
-Enhanced animations and interactive notification elements.
-
-```php
-// Custom animations
-Notif::success('Success!', 'Data saved', [
-    'animation' => 'bounce',
-    'interactive' => true,
-    'actions' => [
-        ['label' => 'View Details', 'action' => 'view'],
-        ['label' => 'Dismiss', 'action' => 'dismiss']
-    ]
-]);
-```
-
-#### Notification Channels
-Multi-channel notification delivery (browser, email, SMS).
-
-```php
-// Multiple channels
-Notif::channel('browser')->success('Browser notification');
-Notif::channel('email')->info('Email notification');
-Notif::channel('sms')->warning('SMS notification');
-
-// Channel-specific rendering
-Notif::channel('mobile')->render();
-```
-
-#### Notification Scheduling
-Scheduled and recurring notification delivery.
-
-```php
-// Scheduled notifications
-Notif::schedule('2026-01-15 10:00:00')->info('Scheduled maintenance');
-
-// Recurring notifications
-Notif::recurring('daily')->info('Daily reminder');
-```
-
-#### Security & Performance Features
-Rate limiting, spam protection, and encryption for enterprise use.
-
-```php
-// Rate limiting
-Notif::rateLimit(10, '1 minute')->success('Rate limited notification');
-
-// Spam protection
-Notif::spamProtection()->error('Protected notification');
-
-// Encrypted notifications for sensitive data
-Notif::encrypted('sensitive_key')->info('Encrypted message');
-```
-
-#### Mobile & PWA Support
-Mobile-specific features and haptic feedback.
-
-```php
-// Haptic feedback
-Notif::haptic('success')->success('Haptic notification');
-
-// Mobile gestures
-Notif::gesture('swipe')->info('Swipe to dismiss');
-```
-
-#### Testing & Debugging Framework
-Comprehensive testing tools and debug mode for development.
-
-```php
-// Test notifications
-Notif::test()->assertRendered('success');
-Notif::test()->assertCount(3);
-Notif::test()->assertContains('Welcome message');
-
-// Debug mode for development
-Notif::debug()->info('Debug notification');
-Notif::debug()->log('Notification lifecycle');
-```
-
-### 📊 Implementation Strategy
-
-**Phase 1 Goals:**
-- Improve developer experience with templates and builder pattern
-- Add extensibility through event system
-- Enhance visual appeal with rich content support
-- Maintain backward compatibility
-
-**Phase 2 Goals:**
-- Organize notifications for better management
-- Add real-time progress tracking
-- Implement analytics for insights
-- Support internationalization
-
-**Phase 3 Goals:**
-- Enable real-time communication
-- Support enterprise-scale deployments
-- Add advanced security features
-- Provide comprehensive testing tools
-
-### 🤝 Contributing to the Roadmap
-
-We welcome community contributions! If you'd like to help implement any of these features:
-
-1. **Fork the repository**
-2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
-3. **Follow our coding standards** and add comprehensive tests
-4. **Submit a pull request** with detailed documentation
-
-### 📈 Success Metrics
-
-We'll measure the success of each phase through:
-
-- **Developer Adoption**: Usage statistics and community feedback
-- **Performance Impact**: Rendering speed and memory usage
-- **User Experience**: Engagement metrics and accessibility scores
-- **Code Quality**: Test coverage and maintainability metrics
-
-### 🔄 Continuous Improvement
-
-This roadmap is a living document that will be updated based on:
-
-- Community feedback and feature requests
-- Technology trends and best practices
-- Performance analytics and user research
-- Security considerations and compliance requirements
-
----
-
-*Last updated: July 2025* 

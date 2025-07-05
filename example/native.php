@@ -5,6 +5,11 @@ session_start();
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+// Load helpers manually if not autoloaded
+if (!function_exists('php_notifikasi_asset')) {
+    require_once __DIR__ . '/../src/helpers.php';
+}
+
 use Rzlco\PhpNotifikasi\NotifikasiFacade as Notif;
 use Rzlco\PhpNotifikasi\Notifikasi;
 use Rzlco\PhpNotifikasi\Storage\SessionStorage;
