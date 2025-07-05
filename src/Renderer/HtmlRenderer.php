@@ -60,58 +60,19 @@ class HtmlRenderer implements RendererInterface
 
     private function renderContainer(string $position, array $notifications): string
     {
-        $maxSize = $this->getMaxSize($notifications);
-        $positionClasses = $this->getPositionClasses($position, $maxSize);
-        $animationClass = $this->getAnimationClass($position);
-        
-        $html = '<div class="' . $positionClasses . ' notif-container" data-position="' . $position . '">' . "\n";
+        $positionClasses = $this->getPositionClasses($position);
+        $html = '<div class="php-notifikasi-container ' . $positionClasses . ' p-4 space-y-2" data-position="' . $position . '">' . "\n";
         
         foreach ($notifications as $notification) {
+            $animationClass = $this->getAnimationClass($position);
             $html .= $this->renderNotification($notification, $animationClass);
         }
         
         $html .= '</div>' . "\n";
-        
         return $html;
     }
 
-    private function getMaxSize(array $notifications): string
-    {
-        $maxSize = 'sm';
-        foreach ($notifications as $notification) {
-            $size = $notification->getOption('size', 'md');
-            if ($size === 'lg') {
-                return 'lg';
-            } elseif ($size === 'md' && $maxSize === 'sm') {
-                $maxSize = 'md';
-            }
-        }
-        return $maxSize;
-    }
-
-    private function getPositionClasses(string $position, string $containerSize = 'md'): string
-    {
-        $maxWidth = $this->getMaxWidthClass($containerSize);
-        $base = 'fixed z-50 pointer-events-none ' . $maxWidth . ' p-4';
-        
-        return $base . ' ' . $this->getPositionClass($position);
-    }
-
-    private function getMaxWidthClass(string $containerSize): string
-    {
-        switch($containerSize) {
-            case 'sm':
-                return 'max-w-sm';
-            case 'md':
-                return 'max-w-md';
-            case 'lg':
-                return 'max-w-lg';
-            default:
-                return 'max-w-md';
-        }
-    }
-
-    private function getPositionClass(string $position): string
+    private function getPositionClasses(string $position): string
     {
         switch($position) {
             case 'top-left':
@@ -128,6 +89,20 @@ class HtmlRenderer implements RendererInterface
                 return 'bottom-0 left-1/2 transform -translate-x-1/2';
             default:
                 return 'top-0 right-0';
+        }
+    }
+
+    private function getMaxWidthClass(string $containerSize): string
+    {
+        switch($containerSize) {
+            case 'sm':
+                return 'max-w-sm';
+            case 'md':
+                return 'max-w-md';
+            case 'lg':
+                return 'max-w-lg';
+            default:
+                return 'max-w-md';
         }
     }
 

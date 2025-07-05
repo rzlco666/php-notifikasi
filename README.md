@@ -122,76 +122,141 @@ echo Notif::render();
 
 ### Laravel Integration
 
-Untuk menggunakan di Laravel, ikuti langkah berikut:
+PHP Notifikasi terintegrasi sempurna dengan Laravel dan sudah dioptimalkan untuk menghindari conflict dengan framework CSS seperti Bootstrap.
 
-### 1. Install Package
+### Quick Start
+
+1. **Install package:**
 ```bash
-composer require rzlco/php-notifikasi
+composer require rzlco666/php-notifikasi
 ```
 
-### 2. Publish Assets
+2. **Publish config dan assets:**
 ```bash
+php artisan vendor:publish --tag=config
 php artisan vendor:publish --tag=php-notifikasi-assets
 ```
 
-### 3. Clear Cache
-```bash
-php artisan config:clear
-php artisan cache:clear
-```
-
-### 4. Use in Blade Template
-```php
+3. **Tambahkan di layout blade (`resources/views/layouts/app.blade.php`):**
+```html
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My App</title>
-    <!-- Include assets -->
+    <!-- Bootstrap CSS (atau framework CSS lainnya) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- PHP Notifikasi Assets -->
     <link href="{{ asset('vendor/php-notifikasi/assets/tailwind.min.css') }}" rel="stylesheet">
     <link href="{{ asset('vendor/php-notifikasi/assets/fonts/stylesheet.css') }}" rel="stylesheet">
 </head>
 <body>
-    <!-- Your content -->
+    <!-- PHP Notifikasi Container -->
+    {!! \Rzlco\PhpNotifikasi\NotifikasiFacade::render() !!}
     
-    <!-- Render notifications -->
-    {!! Notif::render() !!}
+    <!-- Content -->
+    @yield('content')
 </body>
 </html>
 ```
 
-### 5. Use in Controller
+4. **Gunakan di Controller:**
 ```php
 <?php
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Rzlco\PhpNotifikasi\NotifikasiFacade as Notif;
 
-class UserController extends Controller
+class AuthController extends Controller
 {
-    public function store(Request $request)
+    public function auth_login(Request $request)
     {
         try {
-            User::create($request->validated());
-            Notif::success('Success', 'User created successfully');
-            return redirect()->route('users.index');
+            // Validasi input
+            $validator = Validator::make($request->all(), [
+                'email_username' => 'required|string',
+                'password' => 'required|string|min:6',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()
+                    ->withErrors($validator)
+                    ->withInput($request->only('email_username'));
+            }
+
+            // Login logic...
+            if (Auth::attempt($credentials, $remember)) {
+                $request->session()->regenerate();
+
+                // Notifikasi success - akan muncul di bottom-right sesuai config
+                Notif::success('Welcome back, ' . Auth::user()->name . '!', 'You have successfully logged in.');
+                return redirect()->route('admin.dashboard');
+            } else {
+                Notif::error('Invalid credentials. Please check your email/username and password.');
+                return redirect()->back()->withInput($request->only('email_username'));
+            }
+
         } catch (\Exception $e) {
-            Notif::error('Error', 'Failed to create user');
-            return back()->withInput();
+            Notif::error('An error occurred during login. Please try again.');
+            return redirect()->back()->withInput($request->only('email_username'));
         }
     }
 }
 ```
 
-### Troubleshooting Laravel
+### Configuration
 
-Jika asset 404 error:
-1. Pastikan sudah publish assets: `php artisan vendor:publish --tag=php-notifikasi-assets`
-2. Cek file ada di `public/vendor/php-notifikasi/assets/`
-3. Clear cache: `php artisan config:clear && php artisan cache:clear`
-4. Test dengan demo: `example/laravel_demo.php`
+File config akan dipublish ke `config/notifikasi.php`:
 
-Lihat [LARAVEL_INTEGRATION.md](LARAVEL_INTEGRATION.md) untuk dokumentasi lengkap.
+```php
+<?php
+
+return [
+    'default_position' => 'bottom-right',  // Posisi default notifikasi
+    'default_duration' => 5000,            // Durasi dalam ms
+    'default_style' => 'clean',            // Style default
+    'default_size' => 'md',                // Ukuran default
+    'default_mode' => 'light',             // Mode default (light/dark/auto)
+    'include_css' => true,                 // Include CSS otomatis
+    'include_js' => true,                  // Include JS otomatis
+    'theme' => 'ios',                      // Theme default
+];
+```
+
+### Features untuk Laravel
+
+✅ **CSS Isolation**: Semua CSS diisolasi dengan prefix `.php-notifikasi-container` untuk menghindari conflict dengan Bootstrap atau framework CSS lainnya
+
+✅ **High Z-Index**: Z-index 999999 memastikan notifikasi muncul di atas semua elemen termasuk navbar fixed
+
+✅ **Config Integration**: ServiceProvider membaca config Laravel dengan benar dan merge dengan default values
+
+✅ **Asset Publishing**: Assets otomatis dipublish ke `public/vendor/php-notifikasi/assets/`
+
+✅ **Helper Function**: Menggunakan `php_notifikasi_asset()` helper untuk path yang konsisten
+
+✅ **Blade Directive**: Tersedia directive `@notifikasi` untuk kemudahan penggunaan
+
+### Troubleshooting
+
+**Notifikasi tidak muncul di posisi yang benar:**
+- Pastikan config `default_position` sudah diset dengan benar
+- Clear cache: `php artisan config:clear && php artisan cache:clear`
+
+**CSS conflict dengan Bootstrap:**
+- CSS sudah diisolasi dengan prefix `.php-notifikasi-container`
+- Semua style menggunakan `!important` untuk memastikan override
+
+**Notifikasi tersembunyi di belakang header:**
+- Z-index sudah diset ke 999999 untuk memastikan muncul di atas semua elemen
+- Pastikan tidak ada elemen lain dengan z-index yang lebih tinggi
+
+**Assets 404 error:**
+- Publish assets: `php artisan vendor:publish --tag=php-notifikasi-assets`
+- Check file permissions di `public/vendor/php-notifikasi/assets/`
+- Clear route cache: `php artisan route:clear`
 
 ## 📖 Core Concepts
 

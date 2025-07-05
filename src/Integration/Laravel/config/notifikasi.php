@@ -10,7 +10,7 @@ return [
     | bottom-left, bottom-right, bottom-center
     |
     */
-    'default_position' => 'top-right',
+    'default_position' => 'bottom-right',
 
     /*
     |--------------------------------------------------------------------------

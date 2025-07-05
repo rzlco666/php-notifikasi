@@ -702,7 +702,7 @@ if (isset($_GET['action'])) {
                             <div class="code-header">
                                 <span>Via Composer</span>
                                 <button class="copy-button" onclick="copyCode(this)">Copy</button>
-                            </div>
+            </div>
                             <pre><code class="language-bash">composer require rzlco666/php-notifikasi</code></pre>
                         </div>
                         <div class="text-sm text-white/60 mb-4">

@@ -11,371 +11,339 @@ class CssAssetManager
 
     private function getTailwindCSS(): string
     {
-        return '<link href="/assets/tailwind.min.css" rel="stylesheet">' . "\n"
-            . '<link href="/assets/fonts/stylesheet.css" rel="stylesheet">' . "\n";
+        // Gunakan helper function jika tersedia, fallback ke path default
+        if (function_exists('php_notifikasi_asset')) {
+            return '<link href="' . php_notifikasi_asset('tailwind.min.css') . '" rel="stylesheet">' . "\n"
+                . '<link href="' . php_notifikasi_asset('fonts/stylesheet.css') . '" rel="stylesheet">' . "\n";
+        }
+        
+        return '<link href="/vendor/php-notifikasi/assets/tailwind.min.css" rel="stylesheet">' . "\n"
+            . '<link href="/vendor/php-notifikasi/assets/fonts/stylesheet.css" rel="stylesheet">' . "\n";
     }
 
     private function getCustomStyles(): string
     {
         return '<style>
-        /* iOS Font Stack */
-        .ios-font {
+        /* PHP Notifikasi - Isolated Styles */
+        .php-notifikasi-container {
+            position: fixed;
+            z-index: 999999;
+            pointer-events: none;
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
         }
         
-        /* iOS Blur Effect */
-        .ios-blur {
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+        .php-notifikasi-container * {
+            box-sizing: border-box;
         }
         
-        .ios-blur-dark {
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+        /* iOS Font Stack - Scoped */
+        .php-notifikasi-container .ios-font {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", system-ui, sans-serif !important;
         }
         
-        /* Transparent Blur Theme (iOS style) */
-        .notif-blur {
-            background: rgba(245, 245, 247, 0.75);
-            border: 1px solid rgba(60, 60, 67, 0.12);
-            box-shadow: 0 4px 24px rgba(60, 60, 67, 0.08);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+        /* iOS Blur Effect - Scoped */
+        .php-notifikasi-container .ios-blur {
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
         }
         
-        .notif-blur-dark {
-            background: rgba(28, 28, 30, 0.75);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+        .php-notifikasi-container .ios-blur-dark {
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
         }
         
-        /* Liquid Glass Theme (iOS 17+ style) */
-        .notif-liquid-glass {
-            background: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        /* Transparent Blur Theme (iOS style) - Scoped */
+        .php-notifikasi-container .notif-blur {
+            background: rgba(245, 245, 247, 0.75) !important;
+            border: 1px solid rgba(60, 60, 67, 0.12) !important;
+            box-shadow: 0 4px 24px rgba(60, 60, 67, 0.08) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+        }
+        
+        .php-notifikasi-container .notif-blur-dark {
+            background: rgba(28, 28, 30, 0.75) !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+        }
+        
+        /* Liquid Glass Theme (iOS 17+ style) - Scoped */
+        .php-notifikasi-container .notif-liquid-glass {
+            background: rgba(255, 255, 255, 0.85) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
             box-shadow: 
                 0 8px 32px rgba(0, 0, 0, 0.12),
                 0 2px 8px rgba(0, 0, 0, 0.08),
-                inset 0 1px 0 rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(24px) saturate(180%);
-            -webkit-backdrop-filter: blur(24px) saturate(180%);
-            border-radius: 16px;
+                inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+            backdrop-filter: blur(24px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+            border-radius: 16px !important;
         }
         
-        .notif-liquid-glass-dark {
-            background: rgba(28, 28, 30, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .php-notifikasi-container .notif-liquid-glass-dark {
+            background: rgba(28, 28, 30, 0.85) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
             box-shadow: 
                 0 8px 32px rgba(0, 0, 0, 0.4),
                 0 2px 8px rgba(0, 0, 0, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(24px) saturate(180%);
-            -webkit-backdrop-filter: blur(24px) saturate(180%);
-            border-radius: 16px;
+                inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(24px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+            border-radius: 16px !important;
         }
         
-        /* Clean notification shadow */
-        .notif-shadow {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        /* Clean notification shadow - Scoped */
+        .php-notifikasi-container .notif-shadow {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
         }
         
-        /* Notification sizes */
-        .notif-sm {
-            min-width: 280px;
-            max-width: 320px;
+        /* Notification sizes - Scoped */
+        .php-notifikasi-container .notif-sm {
+            min-width: 280px !important;
+            max-width: 320px !important;
         }
         
-        .notif-md {
-            min-width: 320px;
-            max-width: 380px;
+        .php-notifikasi-container .notif-md {
+            min-width: 320px !important;
+            max-width: 380px !important;
         }
         
-        .notif-lg {
-            min-width: 380px;
-            max-width: 450px;
+        .php-notifikasi-container .notif-lg {
+            min-width: 380px !important;
+            max-width: 450px !important;
         }
         
-        /* Custom iOS animations */
-        .slide-in-right {
-            animation: slideInRight 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        /* Custom iOS animations - Scoped */
+        .php-notifikasi-container .slide-in-right {
+            animation: phpNotifikasiSlideInRight 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards !important;
         }
         
-        .slide-in-left {
-            animation: slideInLeft 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        .php-notifikasi-container .slide-in-left {
+            animation: phpNotifikasiSlideInLeft 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards !important;
         }
         
-        .slide-in-top {
-            animation: slideInTop 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        .php-notifikasi-container .slide-in-top {
+            animation: phpNotifikasiSlideInTop 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards !important;
         }
         
-        .slide-in-bottom {
-            animation: slideInBottom 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        .php-notifikasi-container .slide-in-bottom {
+            animation: phpNotifikasiSlideInBottom 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards !important;
         }
         
-        .slide-out-right {
-            animation: slideOutRight 0.25s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+        .php-notifikasi-container .slide-out-right {
+            animation: phpNotifikasiSlideOutRight 0.25s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards !important;
         }
         
-        .slide-out-left {
-            animation: slideOutLeft 0.25s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+        .php-notifikasi-container .slide-out-left {
+            animation: phpNotifikasiSlideOutLeft 0.25s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards !important;
         }
         
-        .slide-out-top {
-            animation: slideOutTop 0.25s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+        .php-notifikasi-container .slide-out-top {
+            animation: phpNotifikasiSlideOutTop 0.25s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards !important;
         }
         
-        .slide-out-bottom {
-            animation: slideOutBottom 0.25s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+        .php-notifikasi-container .slide-out-bottom {
+            animation: phpNotifikasiSlideOutBottom 0.25s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards !important;
         }
         
-        @keyframes slideInRight {
+        @keyframes phpNotifikasiSlideInRight {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
         
-        @keyframes slideInLeft {
+        @keyframes phpNotifikasiSlideInLeft {
             from { transform: translateX(-100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
         
-        @keyframes slideInTop {
+        @keyframes phpNotifikasiSlideInTop {
             from { transform: translateY(-100%); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
         
-        @keyframes slideInBottom {
+        @keyframes phpNotifikasiSlideInBottom {
             from { transform: translateY(100%); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
         
-        @keyframes slideOutRight {
+        @keyframes phpNotifikasiSlideOutRight {
             from { transform: translateX(0); opacity: 1; }
             to { transform: translateX(100%); opacity: 0; }
         }
         
-        @keyframes slideOutLeft {
+        @keyframes phpNotifikasiSlideOutLeft {
             from { transform: translateX(0); opacity: 1; }
             to { transform: translateX(-100%); opacity: 0; }
         }
         
-        @keyframes slideOutTop {
+        @keyframes phpNotifikasiSlideOutTop {
             from { transform: translateY(0); opacity: 1; }
             to { transform: translateY(-100%); opacity: 0; }
         }
         
-        @keyframes slideOutBottom {
+        @keyframes phpNotifikasiSlideOutBottom {
             from { transform: translateY(0); opacity: 1; }
             to { transform: translateY(100%); opacity: 0; }
         }
         
-        /* Clean style - white background */
-        .notif-clean {
-            background: white;
-            color: #374151;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+        /* Clean style - white background - Scoped */
+        .php-notifikasi-container .notif-clean {
+            background: white !important;
+            color: #374151 !important;
+            border: 1px solid rgba(0, 0, 0, 0.05) !important;
         }
         
-        .notif-clean .notif-title {
-            color: #111827;
+        .php-notifikasi-container .notif-clean .notif-title {
+            color: #111827 !important;
         }
         
-        .notif-clean .notif-message {
-            color: #6B7280;
+        .php-notifikasi-container .notif-clean .notif-message {
+            color: #6B7280 !important;
         }
         
-        .notif-clean .notif-time {
-            color: #9CA3AF;
+        .php-notifikasi-container .notif-clean .notif-time {
+            color: #9CA3AF !important;
         }
         
-        /* Clean style - dark mode */
-        .notif-clean-dark {
-            background: #1F2937;
-            color: #F9FAFB;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        /* Clean style - dark mode - Scoped */
+        .php-notifikasi-container .notif-clean-dark {
+            background: #1F2937 !important;
+            color: #F9FAFB !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
         }
         
-        .notif-clean-dark .notif-title-dark {
-            color: #F9FAFB;
+        .php-notifikasi-container .notif-clean-dark .notif-title-dark {
+            color: #F9FAFB !important;
         }
         
-        .notif-clean-dark .notif-message-dark {
-            color: #D1D5DB;
+        .php-notifikasi-container .notif-clean-dark .notif-message-dark {
+            color: #D1D5DB !important;
         }
         
-        .notif-clean-dark .notif-time-dark {
-            color: #9CA3AF;
+        .php-notifikasi-container .notif-clean-dark .notif-time-dark {
+            color: #9CA3AF !important;
         }
         
-        /* iOS close button */
-        .ios-close-btn {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: rgba(60, 60, 67, 0.18);
-            color: rgba(60, 60, 67, 0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
+        /* Colored style - Scoped */
+        .php-notifikasi-container .notif-colored {
+            color: white !important;
+            border: none !important;
         }
         
-        .ios-close-btn:hover {
-            background: rgba(60, 60, 67, 0.28);
-            color: rgba(60, 60, 67, 0.8);
+        .php-notifikasi-container .notif-colored .notif-title {
+            color: white !important;
         }
         
-        /* iOS close button - dark mode */
-        .ios-close-btn-dark {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.18);
-            color: rgba(255, 255, 255, 0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
+        .php-notifikasi-container .notif-colored .notif-message {
+            color: rgba(255, 255, 255, 0.9) !important;
         }
         
-        .ios-close-btn-dark:hover {
-            background: rgba(255, 255, 255, 0.28);
-            color: rgba(255, 255, 255, 0.8);
+        .php-notifikasi-container .notif-colored .notif-time {
+            color: rgba(255, 255, 255, 0.7) !important;
         }
         
-        /* Colored style - gradient backgrounds */
-        .notif-success {
-            background: linear-gradient(135deg, rgba(52, 211, 153, 0.95), rgba(16, 185, 129, 0.95));
+        /* Success colors - Scoped */
+        .php-notifikasi-container .notif-colored.notif-success {
+            background: linear-gradient(135deg, #10B981, #059669) !important;
         }
         
-        .notif-error {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 0.95));
+        .php-notifikasi-container .notif-colored.notif-error {
+            background: linear-gradient(135deg, #EF4444, #DC2626) !important;
         }
         
-        .notif-warning {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.95), rgba(217, 119, 6, 0.95));
+        .php-notifikasi-container .notif-colored.notif-warning {
+            background: linear-gradient(135deg, #F59E0B, #D97706) !important;
         }
         
-        .notif-info {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(37, 99, 235, 0.95));
+        .php-notifikasi-container .notif-colored.notif-info {
+            background: linear-gradient(135deg, #3B82F6, #2563EB) !important;
         }
         
-        .notif-custom {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.95), rgba(124, 58, 237, 0.95));
+        /* Icon badges - Scoped */
+        .php-notifikasi-container .badge-success {
+            background: #10B981 !important;
+            color: white !important;
         }
         
-        /* Colored style - dark mode gradients */
-        .notif-success-dark {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.95), rgba(5, 150, 105, 0.95));
+        .php-notifikasi-container .badge-error {
+            background: #EF4444 !important;
+            color: white !important;
         }
         
-        .notif-error-dark {
-            background: linear-gradient(135deg, rgba(220, 38, 38, 0.95), rgba(185, 28, 28, 0.95));
+        .php-notifikasi-container .badge-warning {
+            background: #F59E0B !important;
+            color: white !important;
         }
         
-        .notif-warning-dark {
-            background: linear-gradient(135deg, rgba(217, 119, 6, 0.95), rgba(194, 65, 12, 0.95));
+        .php-notifikasi-container .badge-info {
+            background: #3B82F6 !important;
+            color: white !important;
         }
         
-        .notif-info-dark {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.95), rgba(30, 64, 175, 0.95));
+        .php-notifikasi-container .badge-success-dark {
+            background: #059669 !important;
+            color: white !important;
         }
         
-        .notif-custom-dark {
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.95), rgba(109, 40, 217, 0.95));
+        .php-notifikasi-container .badge-error-dark {
+            background: #DC2626 !important;
+            color: white !important;
         }
         
-        /* Icon badge colors for clean style */
-        .badge-success { 
-            background: #10B981; 
-            color: white;
-        }
-        .badge-error { 
-            background: #EF4444; 
-            color: white;
-        }
-        .badge-warning { 
-            background: #F59E0B; 
-            color: white;
-        }
-        .badge-info { 
-            background: #3B82F6; 
-            color: white;
-        }
-        .badge-custom { 
-            background: #8B5CF6; 
-            color: white;
+        .php-notifikasi-container .badge-warning-dark {
+            background: #D97706 !important;
+            color: white !important;
         }
         
-        /* Icon badge colors for clean style - dark mode */
-        .badge-success-dark { 
-            background: #059669; 
-            color: white;
-        }
-        .badge-error-dark { 
-            background: #DC2626; 
-            color: white;
-        }
-        .badge-warning-dark { 
-            background: #D97706; 
-            color: white;
-        }
-        .badge-info-dark { 
-            background: #2563EB; 
-            color: white;
-        }
-        .badge-custom-dark { 
-            background: #7C3AED; 
-            color: white;
+        .php-notifikasi-container .badge-info-dark {
+            background: #2563EB !important;
+            color: white !important;
         }
         
-        /* Progress bar */
-        .progress-bar {
-            height: 2px;
-            background: rgba(0, 0, 0, 0.1);
+        /* Close button - Scoped */
+        .php-notifikasi-container .ios-close-btn {
+            color: #9CA3AF !important;
+            transition: color 0.2s ease !important;
         }
         
-        .progress-bar-colored {
-            background: rgba(255, 255, 255, 0.4);
+        .php-notifikasi-container .ios-close-btn:hover {
+            color: #6B7280 !important;
         }
         
-        /* Progress bar - dark mode */
-        .progress-bar-dark {
-            height: 2px;
-            background: rgba(255, 255, 255, 0.1);
+        .php-notifikasi-container .ios-close-btn-dark {
+            color: #6B7280 !important;
         }
         
-        .progress-bar-colored-dark {
-            background: rgba(255, 255, 255, 0.3);
+        .php-notifikasi-container .ios-close-btn-dark:hover {
+            color: #9CA3AF !important;
         }
         
-        @keyframes progress-countdown {
-            from { width: 100%; }
-            to { width: 0%; }
+        /* Progress bar - Scoped */
+        .php-notifikasi-container .progress-bar {
+            background: rgba(0, 0, 0, 0.1) !important;
         }
         
-        /* Mobile responsiveness */
+        .php-notifikasi-container .progress-bar-dark {
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        /* Pointer events untuk container */
+        .php-notifikasi-container .pointer-events-auto {
+            pointer-events: auto !important;
+        }
+        
+        /* Responsive adjustments - Scoped */
         @media (max-width: 640px) {
-            .notif-container {
-                left: 1rem !important;
-                right: 1rem !important;
-                transform: none !important;
-                max-width: none !important;
-            }
-            
-            .notif-sm, .notif-md, .notif-lg {
-                min-width: auto !important;
-                max-width: none !important;
+            .php-notifikasi-container .notif-sm,
+            .php-notifikasi-container .notif-md,
+            .php-notifikasi-container .notif-lg {
+                min-width: calc(100vw - 32px) !important;
+                max-width: calc(100vw - 32px) !important;
+                margin: 8px !important;
             }
         }
-        
-        /* Tablet responsiveness for LG notifications */
-        @media (max-width: 768px) {
-            .notif-lg {
-                max-width: 100% !important;
-            }
-        }
-        </style>' . "\n";
+        </style>';
     }
 } 

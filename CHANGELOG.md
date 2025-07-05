@@ -45,6 +45,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 100% test coverage
 - Laravel integration ready
 
+## [0.1.2] - 2025-01-15
+
+### Fixed
+- **Config Reading Issue**: ServiceProvider sekarang membaca config Laravel dengan benar dan merge dengan default values
+- **CSS Conflict**: Semua CSS diisolasi dengan prefix `.php-notifikasi-container` untuk menghindari conflict dengan Bootstrap atau framework CSS lainnya
+- **Z-Index Issue**: Z-index ditingkatkan ke 999999 untuk memastikan notifikasi muncul di atas semua elemen termasuk navbar fixed
+- **Asset Path**: Menggunakan helper function `php_notifikasi_asset()` untuk path yang konsisten di Laravel
+- **Position Default**: Config `default_position = 'bottom-right'` sekarang terbaca dengan benar
+
+### Changed
+- **CSS Isolation**: Semua style menggunakan `!important` dan prefix `.php-notifikasi-container` untuk isolasi sempurna
+- **Animation Names**: Keyframe animations diubah dengan prefix `phpNotifikasi` untuk menghindari conflict
+- **Container Class**: Container menggunakan class `php-notifikasi-container` untuk isolasi yang lebih baik
+- **ServiceProvider**: Improved config merging dengan default values yang benar
+
+### Added
+- **Enhanced Laravel Demo**: Demo yang menunjukkan integrasi dengan Bootstrap tanpa conflict
+- **Troubleshooting Guide**: Panduan lengkap untuk masalah umum di Laravel
+- **CSS Isolation Documentation**: Penjelasan tentang isolasi CSS dan cara kerjanya
+
 ## [0.1.1] - 2025-01-15
 
 ### Added

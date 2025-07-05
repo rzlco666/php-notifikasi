@@ -1,172 +1,192 @@
 <?php
-// PHP Notifikasi - Laravel Demo
-// Start session before any output
-session_start();
+/**
+ * Laravel Integration Demo
+ * 
+ * Cara menggunakan PHP Notifikasi di Laravel
+ */
 
-require_once __DIR__ . '/../vendor/autoload.php';
+// 1. Install package via Composer
+// composer require rzlco666/php-notifikasi
 
-use Rzlco\PhpNotifikasi\NotifikasiFacade as Notif;
-use Rzlco\PhpNotifikasi\Notifikasi;
-use Rzlco\PhpNotifikasi\Storage\SessionStorage;
+// 2. Publish config dan assets
+// php artisan vendor:publish --tag=config
+// php artisan vendor:publish --tag=php-notifikasi-assets
 
-// Set SessionStorage for demo persistence
-Notif::setInstance(new Notifikasi(new SessionStorage()));
-
-// Handle notification actions
-if (isset($_GET['action'])) {
-    switch ($_GET['action']) {
-        case 'success':
-            Notif::success('Success', 'Operation completed successfully');
-            break;
-        case 'error':
-            Notif::error('Error', 'An error occurred while processing');
-            break;
-        case 'warning':
-            Notif::warning('Warning', 'Please check your input data');
-            break;
-        case 'info':
-            Notif::info('Information', 'New updates are available');
-            break;
-        case 'success_clean':
-            Notif::success('Success', 'Your changes have been saved', ['style' => 'clean']);
-            break;
-        case 'error_clean':
-            Notif::error('Error', 'Something went wrong. Please try again', ['style' => 'clean']);
-            break;
-        case 'success_dark':
-            Notif::success('Success', 'Your changes have been saved', ['style' => 'clean', 'mode' => 'dark']);
-            break;
-        case 'error_dark':
-            Notif::error('Error', 'Something went wrong. Please try again', ['style' => 'clean', 'mode' => 'dark']);
-            break;
-    }
-    
-    // Redirect to prevent refresh
-    header('Location: ' . strtok($_SERVER["REQUEST_URI"], '?'));
-    exit;
-}
+// 3. Tambahkan di layout blade (resources/views/layouts/app.blade.php)
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHP Notifikasi - Laravel Demo</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔔</text></svg>">
+    <title>Laravel + PHP Notifikasi Demo</title>
     
-    <!-- Laravel Asset Paths -->
-    <link href="/vendor/php-notifikasi/assets/tailwind.min.css" rel="stylesheet">
-    <link href="/vendor/php-notifikasi/assets/fonts/stylesheet.css" rel="stylesheet">
+    <!-- Bootstrap CSS (untuk demo conflict) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
-            background: #000000;
-            color: white;
-            margin: 0;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .demo-section {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-        
-        .button {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            text-decoration: none;
-            display: inline-block;
-            margin: 8px;
-            transition: all 0.2s;
-        }
-        
-        .button:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-1px);
-        }
-        
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-top: 16px;
-        }
-        
-        .info-box {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 16px;
-            margin-top: 16px;
-        }
-    </style>
+    <!-- PHP Notifikasi Assets -->
+    <link href="{{ asset('vendor/php-notifikasi/assets/tailwind.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/php-notifikasi/assets/fonts/stylesheet.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>🔔 PHP Notifikasi - Laravel Demo</h1>
-        <p>Demo untuk testing di Laravel environment dengan asset path yang benar.</p>
+    <!-- PHP Notifikasi Container -->
+    {!! \Rzlco\PhpNotifikasi\NotifikasiFacade::render() !!}
+    
+    <!-- Bootstrap Navbar (untuk demo z-index) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Laravel App</a>
+        </div>
+    </nav>
+    
+    <div class="container mt-4">
+        <h1>Laravel + PHP Notifikasi Demo</h1>
+        <p>Notifikasi akan muncul di pojok kanan bawah sesuai config default.</p>
         
-        <div class="demo-section">
-            <h2>Basic Notifications</h2>
-            <div class="grid">
-                <a href="?action=success" class="button">✅ Success</a>
-                <a href="?action=error" class="button">❌ Error</a>
-                <a href="?action=warning" class="button">⚠️ Warning</a>
-                <a href="?action=info" class="button">ℹ️ Info</a>
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Controller Example</h3>
+                <pre><code>
+// AuthController.php
+use Rzlco\PhpNotifikasi\NotifikasiFacade as Notif;
+
+public function auth_login(Request $request)
+{
+    try {
+        // Validasi input
+        $validator = Validator::make($request->all(), [
+            'email_username' => 'required|string',
+            'password' => 'required|string|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput($request->only('email_username'));
+        }
+
+        // Login logic...
+        if (Auth::attempt($credentials, $remember)) {
+            $request->session()->regenerate();
+
+            // Notifikasi success - akan muncul di bottom-right sesuai config
+            Notif::success('Welcome back, ' . Auth::user()->name . '!', 'You have successfully logged in.');
+            return redirect()->route('admin.dashboard');
+        } else {
+            Notif::error('Invalid credentials. Please check your email/username and password.');
+            return redirect()->back()->withInput($request->only('email_username'));
+        }
+
+    } catch (\Exception $e) {
+        Notif::error('An error occurred during login. Please try again.');
+        return redirect()->back()->withInput($request->only('email_username'));
+    }
+}
+                </code></pre>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Config File</h3>
+                <pre><code>
+// config/notifikasi.php
+return [
+    'default_position' => 'bottom-right',
+    'default_duration' => 5000,
+    'default_style' => 'clean',
+    'default_size' => 'md',
+    'default_mode' => 'light',
+    'include_css' => true,
+    'include_js' => true,
+    'theme' => 'ios',
+];
+                </code></pre>
             </div>
         </div>
         
-        <div class="demo-section">
-            <h2>Clean Style</h2>
-            <div class="grid">
-                <a href="?action=success_clean" class="button">✅ Success Clean</a>
-                <a href="?action=error_clean" class="button">❌ Error Clean</a>
+        <div class="row mt-4">
+            <div class="col-12">
+                <h3>Test Notifications</h3>
+                <button class="btn btn-success" onclick="testSuccess()">Success</button>
+                <button class="btn btn-danger" onclick="testError()">Error</button>
+                <button class="btn btn-warning" onclick="testWarning()">Warning</button>
+                <button class="btn btn-info" onclick="testInfo()">Info</button>
             </div>
-        </div>
-        
-        <div class="demo-section">
-            <h2>Dark Mode</h2>
-            <div class="grid">
-                <a href="?action=success_dark" class="button">✅ Success Dark</a>
-                <a href="?action=error_dark" class="button">❌ Error Dark</a>
-            </div>
-        </div>
-        
-        <div class="info-box">
-            <h3>📋 Instructions for Laravel</h3>
-            <ol>
-                <li><strong>Publish assets:</strong> <code>php artisan vendor:publish --tag=php-notifikasi-assets</code></li>
-                <li><strong>Clear cache:</strong> <code>php artisan config:clear && php artisan cache:clear</code></li>
-                <li><strong>Check assets:</strong> Verify files exist in <code>public/vendor/php-notifikasi/assets/</code></li>
-                <li><strong>Use in Blade:</strong> <code>&lt;link href="{{ asset('vendor/php-notifikasi/assets/tailwind.min.css') }}"&gt;</code></li>
-            </ol>
-        </div>
-        
-        <div class="info-box">
-            <h3>🔧 Troubleshooting</h3>
-            <ul>
-                <li>If assets return 404, make sure you've published them</li>
-                <li>Check that the vendor directory exists in public/</li>
-                <li>Verify file permissions allow web server to read assets</li>
-                <li>Use <code>php artisan route:clear</code> if using route caching</li>
-            </ul>
         </div>
     </div>
 
-    <!-- Render notifications -->
-    <?= Notif::render() ?>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+    function testSuccess() {
+        fetch('/test-notification/success', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json',
+            }
+        });
+    }
+    
+    function testError() {
+        fetch('/test-notification/error', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json',
+            }
+        });
+    }
+    
+    function testWarning() {
+        fetch('/test-notification/warning', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json',
+            }
+        });
+    }
+    
+    function testInfo() {
+        fetch('/test-notification/info', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json',
+            }
+        });
+    }
+    </script>
 </body>
-</html> 
+</html>
+
+<?php
+// 4. Route untuk testing (routes/web.php)
+/*
+Route::post('/test-notification/{type}', function ($type) {
+    switch ($type) {
+        case 'success':
+            \Rzlco\PhpNotifikasi\NotifikasiFacade::success('Success!', 'This is a success notification');
+            break;
+        case 'error':
+            \Rzlco\PhpNotifikasi\NotifikasiFacade::error('Error!', 'This is an error notification');
+            break;
+        case 'warning':
+            \Rzlco\PhpNotifikasi\NotifikasiFacade::warning('Warning!', 'This is a warning notification');
+            break;
+        case 'info':
+            \Rzlco\PhpNotifikasi\NotifikasiFacade::info('Info!', 'This is an info notification');
+            break;
+    }
+    return response()->json(['status' => 'success']);
+});
+*/
+
+// 5. Features yang sudah diperbaiki:
+// - Config default_position = 'bottom-right' akan terbaca dengan benar
+// - CSS diisolasi dengan prefix .php-notifikasi-container untuk menghindari conflict dengan Bootstrap
+// - Z-index tinggi (999999) untuk memastikan notifikasi muncul di atas semua elemen
+// - Asset path menggunakan helper function php_notifikasi_asset() untuk Laravel
+// - ServiceProvider membaca config dengan benar dan merge dengan default values
+?> 
